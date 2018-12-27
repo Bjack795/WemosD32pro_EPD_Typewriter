@@ -1,0 +1,420 @@
+//GUI_functions.ino
+
+int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu 
+{
+  paginaBianca();
+  int arrow = 0;
+  int ypage = 0;
+  int FLAG_ESC = 0;
+  int tasto = 1;
+  int limite = _min(num,RES_LINES);
+  int limite2 = _max(num,RES_LINES);
+  CHOSEN = 0;
+  while (CHOSEN == 0)
+  {
+    Webserver_loop();
+  if (tasto == 1)
+  {
+  
+      display.setTextColor(GxEPD_BLACK);
+      display.setFullWindow();
+      display.fillScreen(GxEPD_WHITE);
+      for (int i = 0; i<limite ;i++)
+      {
+        display.setCursor(MARGINE_SX, i*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+        display.println(choices[i+ypage]);
+      } 
+  
+  display.setTextColor(GxEPD_BLACK);
+  display.setCursor(XRES-MARGINE_DX-textWidth("<-"), arrow*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+  display.println("<-");
+  display.display(true); 
+  tasto = 0;
+  }
+
+  if (Tastiera.available() > 0) {
+      ANSWER = keyboard_loop();
+      if (ANSWER == "[Enter]")
+      {
+        CHOSEN = 1;
+        break;
+        
+      }
+      else if (ANSWER == "[Up]") //arrow up
+      {
+        tasto = 1;
+        FLAG_ESC = 0;
+        if(arrow > 0) {arrow--;}
+        else if (ypage > 0) {ypage--;}
+      }
+      else if (ANSWER == "[Down]") //arrow down
+      {
+        tasto = 1;
+        FLAG_ESC = 0;
+        if(arrow < limite-1) {arrow++;}
+        else if (ypage < limite2-RES_LINES) {ypage++;}
+      }
+      else if (ANSWER == "[Right]") 
+      { FLAG_ESC = 0; }
+      else if (ANSWER == "[Left]") 
+      { FLAG_ESC = 0; }
+      
+      else if (ANSWER == "[Esc]")
+      {
+         FLAG_ESC = 1;      
+        
+      }
+  }
+  else if(FLAG_ESC == 1)
+        {                }
+  }
+  Serial.print("scelta:");
+  Serial.println(ypage+arrow);
+  return ypage+arrow;  
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int open_file(String tpath,int* nem,char choices[][XRES-4*SPAZIATURA]) //choice of the file
+{
+  getDirectory(tpath, nem, choices);
+  paginaBianca();
+  int num = *nem;
+  int ypage = 0;
+  int arrow = 0;
+  int FLAG_ESC = 0;
+  String pit;
+  int tasto = 1;
+  int limite = _min(num,RES_LINES);
+  int limite2 = _max(num,RES_LINES);
+  CHOSEN = 0;
+  while (CHOSEN == 0)
+  {
+    Webserver_loop();
+  if (tasto == 1)
+  {
+      display.setTextColor(GxEPD_BLACK);
+      display.setFullWindow();
+      display.fillScreen(GxEPD_WHITE);
+      for (int i = 0; i<limite;i++)
+      {
+        display.setCursor(MARGINE_SX, i*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+        display.println(choices[i+ypage]);
+      } 
+    display.setTextColor(GxEPD_BLACK);
+    display.setCursor(XRES-MARGINE_DX-textWidth("<-"), arrow*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+    display.println("<-");
+    display.display(true); 
+    tasto = 0;
+  }
+
+  if (Tastiera.available() > 0) {
+      ANSWER = keyboard_loop();
+      if (ANSWER == "[Up]") //arrow up
+      {
+        tasto = 1;
+        FLAG_ESC = 0;
+        if(arrow > 0) {arrow--;}
+        else if (ypage > 0) {ypage--;}
+      }
+      else if (ANSWER == "[Down]") //arrow down
+      {
+        tasto = 1;
+        FLAG_ESC = 0;
+        if(arrow < limite-1) {arrow++;}
+        else if (ypage < limite2-RES_LINES) {ypage++;}
+      }
+      else if (ANSWER == "[Right]") 
+      { FLAG_ESC = 0; }
+      else if (ANSWER == "[Left]") 
+      { FLAG_ESC = 0; }
+      
+      else if (ANSWER == "[Enter]")
+      {
+       
+        if(LISTA[ypage+arrow][0]=='/')
+        {
+          PREV_LOC = tpath;
+          pit = tpath+(String)(LISTA[ypage+arrow]);
+          null_array(ArrayCount(LISTA), LISTA);
+          LEVEL++;
+          open_file(pit,&LENG,LISTA);
+          return ypage+arrow;
+        }
+
+        else
+        { LAST_LEVEL = LEVEL;
+          LEVEL = 500;
+          CHOSEN = 0;
+          return ypage+arrow; }
+        
+      }
+      else if (ANSWER == "[Esc]")
+      {
+         FLAG_ESC = 1;      
+        
+      }
+      //lcd.clear();
+  }
+  else if(FLAG_ESC == 1)
+        {
+          if (LEVEL>100)
+          { FLAG_ESC = 0;
+            LEVEL--;
+            null_array(ArrayCount(LISTA), LISTA);
+            open_file(PREV_LOC,&LENG,LISTA);
+            return ypage+arrow;
+          }
+                    
+          else 
+          { CHOSEN = 0;
+            //if (LEVEL>0)  {LEVEL--;}
+            LEVEL = 0;
+            FLAG_ESC = 0;
+            return ypage+arrow; }
+        }
+  }  
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void getDirectory(String funpath, int* lung, char list [][XRES-4*SPAZIATURA]) //show the directory
+{
+File dir;
+dir = SD.open(funpath);
+dir.rewindDirectory();  
+int files = 0;
+int lex;
+int slash;
+while(true) {
+Webserver_loop();
+File entry = dir.openNextFile();
+slash = 0;
+if (! entry) {
+// no more files
+*lung = files;
+dir.close();
+break;
+}
+
+if (entry.isDirectory ())
+{
+  for (int j = strlen(entry.name())-1; j>-1; j--)
+  {
+    if(entry.name()[j]=='/')
+    {
+      slash = j;
+      j = -1;
+    }
+  }
+    if (strlen(entry.name())-slash < (XRES-2)) {lex = strlen(entry.name());}
+    else                             {lex = slash+(XRES-2);}
+     for(int i = slash; i<lex; i++)
+   {
+    list[files][i-(slash)] = entry.name()[i];
+   }
+    files++;
+ }
+ else
+{
+  for (int j = strlen(entry.name())-1; j>-1; j--)
+  {
+    if(entry.name()[j]=='/')
+    {
+      slash = j+1;
+      j = -1;
+    }
+  }
+  if (strlen(entry.name())-slash < (XRES-2)) {lex = strlen(entry.name());}
+  else                             {lex = slash+(XRES-2);}
+     for(int i = slash; i<lex; i++)
+   {
+    list[files][i-slash] = entry.name()[i];
+         
+   }
+   
+   
+    files++;
+ }
+
+
+entry.close();
+}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*****************
+int insert_name(char* entry) //make you insert the new file name
+{
+  XCUR = MARGINE_SX;
+  YCUR = MARGINE_UP;
+  FLAG_ESC = 0;
+  bool ent = false;
+  int rap = 0; 
+  int tasto = 1;
+  int index = 0;
+  int mole;
+  int riga_lung = 0;
+  int magazzino [XRES-4*SPAZIATURA];
+  int svuotabuffer = Tastiera.available();
+  paginaBianca();
+  for(int i = 0; i<XRES-MARGINE_DX;i++)
+  {
+    entry[i] = ' ';
+  }
+  while(ent == false)
+  {
+    if(tasto == 1)
+    {
+      Serial.println(riga_lung);
+      display.setTextColor(GxEPD_BLACK);
+      display.setFullWindow();
+      display.fillScreen(GxEPD_WHITE);
+      display.setCursor(MARGINE_SX,MARGINE_UP);
+      display.println("Insert name:");
+      XCUR = MARGINE_SX;
+      if(rap == 0)
+      {
+        disegnaPicture(cursorImage,MARGINE_SX,MARGINE_UP+INGOMBRO+INTERLINEA-abs(MIN_Y1),1,abs(MIN_Y1));
+      }
+      for (int i = 0; i<rap;i++)
+      {
+        Serial.print("index: ");
+        Serial.println(index);
+        if(i == index-1)
+        { Serial.println("EEY");
+          disegnaPicture(cursorImage,XCUR + magazzino[i],MARGINE_UP+INGOMBRO+INTERLINEA-abs(MIN_Y1),1,17);
+        }
+        display.setCursor(XCUR,MARGINE_UP+INGOMBRO+INTERLINEA);
+        display.println(entry[i]);
+        XCUR = XCUR + magazzino[i]+SPAZIATURA;
+        
+      }
+      
+      display.display(true);
+      tasto = 0;
+    }
+    
+    while(Tastiera.available() == 0)
+    {
+      Webserver_loop();
+       if(FLAG_ESC == 1)
+       {    
+          FLAG_ESC = 0;
+          LEVEL = 0;
+          ent = true;
+          XCUR = MARGINE_SX;
+          YCUR = MARGINE_UP;
+          return rap;  
+        }
+    }
+
+      if (Tastiera.available() > 0)
+      {
+        ANSWER = keyboard_loop();
+        if (ANSWER == "[Up]") //arrow up
+        { FLAG_ESC = 0; }
+        else if (ANSWER == "[Down]") //arrow down
+        { FLAG_ESC = 0; }
+        else if (ANSWER == "[Left]") 
+        { tasto = 1;
+          if(index>0) {index--;}
+          FLAG_ESC = 0; 
+                }
+        else if (ANSWER == "[Right]") 
+        { 
+          if(index<rap) {index++;}
+          tasto = 1;
+          FLAG_ESC = 0; 
+                }
+        else if (ANSWER == "[Esc]")
+        { FLAG_ESC = 1;}
+        else if (ANSWER == "[Enter]")
+        { FLAG_ESC = 0;
+          ent = true;
+          XCUR = 0;
+          YCUR = 0;
+          LEVEL = 500;
+          return rap;     
+        }
+        else if (ANSWER == "[Del]")
+        { 
+          tasto = 1;
+          FLAG_ESC = 0;
+          if (index<rap && rap>0) 
+          {
+           riga_lung = riga_lung-charWidth(entry[index])-SPAZIATURA;
+          
+          }
+          for(int i = index; i<rap;i++)
+          {
+            entry[i] = entry[i+1];
+          }
+          entry[rap] = ' ';
+          if (index<rap && rap>0) 
+          {rap--;
+           if(riga_lung < 0) {riga_lung = 0;}
+          }
+         }  
+        else if (ANSWER == "Backspace")
+        { 
+          tasto = 1;
+          if(index>0)
+          {
+            if (rap>0) 
+          { 
+            riga_lung = riga_lung-charWidth(entry[index-1])-SPAZIATURA;
+            if(riga_lung < 0) {riga_lung = 0;}
+            }     
+          for(int i = index-1; i<rap-1;i++)
+          {
+            entry[i] = entry[i+1];
+            if((int)(entry[i]) == 0)
+            {
+             
+            }
+          }
+          entry[rap-1] = ' ';
+          if (rap>0) 
+          { rap--;
+            if(riga_lung < 0) {riga_lung = 0;}
+            index--;
+            }          
+          }
+         }  
+        
+        else if ((int)(ANSWER[0]) != 10)
+        {
+          tasto = 1;
+          FLAG_ESC = 0;
+          mole = charWidth(ANSWER[0]);
+          if((int)(ANSWER[0]) == 32) {mole = 9*SPAZIATURA;}
+          if(riga_lung + mole + SPAZIATURA < XRES-MARGINE_DX-MARGINE_SX && rap < XRES-4*SPAZIATURA) 
+          { 
+            riga_lung = riga_lung + mole + SPAZIATURA;
+            rap++;
+            for(int i = index;i<rap;i++)
+            {
+              entry[i+1] = entry[i];
+              magazzino[i+1] = magazzino[i];
+            }
+            entry[index] = ANSWER[0];
+            magazzino[index] = mole;
+            if(index<XRES-4*SPAZIATURA-1) {index++;}
+            }
+        }
+         
+    }
+ 
+  
+
+  }
+
+  
+}
+
+
+
+
+
+
+
+
+

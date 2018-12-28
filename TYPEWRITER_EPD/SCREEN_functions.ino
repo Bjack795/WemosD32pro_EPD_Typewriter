@@ -17,6 +17,11 @@ void print_page(String pathtext)
   paginaBianca();
   while (true)
   {
+    /*for(int i = 0; i<RES_LINES;i++)
+    {
+      Serial.print("Linea ");Serial.print(i+1);Serial.print(" : ");
+      Serial.println(LINEE[i]);
+    }*/
     posizione = 0;
     for(int z = 0; z<YPAG;z++)
     {
@@ -64,7 +69,7 @@ void print_page(String pathtext)
           }
           else // è '\r'
           {  
-              i--;
+            i--;
           }
         
         }
@@ -240,18 +245,20 @@ void print_page(String pathtext)
         cancellaCarattere(PATHTEMP,place);
         ASCII_file(PATHTEMP, "/Settings/ASCII.txt");
         texto = SD.open(PATHTEMP, FILE_READ);
+        count_lines(texto);
         if(XCUR>0){XCUR--;}
         else
         {
-          if(YCUR>0){YCUR--; XCUR = abs(LINEE[YPAG+YCUR])+(-2-2*sgn(LINEE[YPAG+YCUR]))/2;} 
+          if(YCUR>0)
+          {YCUR--; XCUR = abs(LINEE[YPAG+YCUR])+(-2-2*sgn(LINEE[YPAG+YCUR]))/2;} 
           else if(YPAG>0)
           {YPAG--;
            YCUR = 0;
            XCUR = abs(LINEE[YPAG+YCUR])+(-2-2*sgn(LINEE[YPAG+YCUR]))/2;} 
         }
-        count_lines(texto);
+        
        }
-        }  
+      }  
         
       else if ((int)(ANSWER[0]) != 10)
       {

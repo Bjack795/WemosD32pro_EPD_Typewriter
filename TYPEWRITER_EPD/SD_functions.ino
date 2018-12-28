@@ -114,11 +114,14 @@ void cancellaCarattere(String path, int pos_canc )
   int skip;
   int phase = 0;
   if (rimanenti>1)  ////////////////occhio
-  {skip = 0;}
+  {
+    skip = 0;
+  }
   else
-  {rimanenti = 1;
+  {
+    rimanenti = 1;
     skip = 1;
-    }
+  }
   char resto [rimanenti];
   if (skip == 0)
   {
@@ -237,15 +240,17 @@ void count_lines(File wt)
       wt.seek(i);
       wer = wt.read();   
       k++; 
-      if ((int)(wer) == 10)
+      if ((int)(wer) == 13)
     {
       if (k>0)
-      { LINEE[j] = k;  }
+      { LINEE[j] = k+1;  }
       else
       { LINEE[j] = 0;    }
+      i++;
       k = 0;
       j++;
     }
+        
     else if (k>(RES_WIDTH-1))
     {
       if (k>0)
@@ -305,13 +310,12 @@ void ASCII_file(String pathold, String pathnew)
       textnew.print((int)(wes)); 
       textnew.write(')');  
       count++;
-      if(count>RES_WIDTH-1){textnew.println(); count = 0;}
-      else if(wes == '\n') {textnew.println(); count = 0;}   
+      if(wes == '\n') {textnew.println(); count = 0;} 
+      else if(count>RES_WIDTH-1){textnew.println(); count = 0;}
      }
   textold.close();
   textnew.close();
 }
-
 ///////////////////////////////////////////////////////////////////////////Cursor saving
 void cursor_file_save(char* pathsave)
 {

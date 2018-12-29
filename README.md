@@ -26,7 +26,7 @@ Add the Wemos D32 pro from the Board Manager
 
 All the EPD functions rights belong to ZinggJM (https://github.com/ZinggJM), a genius whose patience and knowledge has been of incredible help in bringing this project up to light.
 
-The functions are an implementation of this library https://github.com/ZinggJM/GxEPD2.
+The functions are an implementation of this library https://github.com/ZinggJM/GxEPD2 and of Adafruit GFX library https://github.com/adafruit/Adafruit-GFX-Library.
 
 ### WebServer Rights
 

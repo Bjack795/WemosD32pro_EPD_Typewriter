@@ -30,7 +30,7 @@ The functions are an implementation of this library https://github.com/ZinggJM/G
 
 ### WebServer Rights
 
-All the WebServer functions rights belong to G6EJD (https://github.com/G6EJD), a genius to whom goes my gratitude for the help given to this project.
+All the WebServer functions rights belong to G6EJD (https://github.com/G6EJD), a genius to whom goes my gratitude for the huge help given to this project, follow him here https://www.youtube.com/user/G6EJD, it's worth it.
 
 The functions are an implementation of this library https://github.com/tzapu/WiFiManager/tree/development and of the standard Webserver.h built-in library.
 

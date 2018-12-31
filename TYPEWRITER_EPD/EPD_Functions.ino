@@ -149,12 +149,13 @@ void disegnaWallpaper(const unsigned char* immagine)
   {
     sabo2 //nome array
   };*/
-  
+    display.setRotation(0);
     bool m = display.mirror(true);
     display.fillScreen(GxEPD_WHITE);
     display.drawInvertedBitmap(0, 0, immagine, display.epd2.WIDTH, display.epd2.HEIGHT, GxEPD_BLACK);
     display.display(true);
     display.mirror(m);
+    display.setRotation(1);
   
 }
 

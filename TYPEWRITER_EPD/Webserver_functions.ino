@@ -23,17 +23,22 @@
 void Webserver_setup(){
   Serial.begin(115200);
   WiFiManager wm;
-  //wm.resetSettings();
+  if(RESET_WIFI == true)
+  {
+    wm.resetSettings();
+  }
   bool res;
   res = wm.autoConnect("BjackWifi","password"); // password protected ap
   // IP for wifimanager:      192.168.4.1
 
     if(!res) {
         Serial.println("Failed to connect");
+        OK_WIFI = false;
         // ESP.restart();
     } 
     else {
-        //if you get here you have connected to the WiFi    
+        //if you get here you have connected to the WiFi   
+        OK_WIFI = true; 
         Serial.println("connected...yeey :)");
         Serial.print("LocalIP :");
         Serial.println(WiFi.localIP());
@@ -44,7 +49,8 @@ void Webserver_setup(){
         Serial.print("SSID :");
         Serial.println(WiFi.SSID());
   Serial.println("\nConnected to "+WiFi.SSID()+" Use IP address: "+WiFi.localIP().toString()); // Report which SSID and IP is in use
-
+  CONNECTED_WIFI = WiFi.SSID();
+  PASSPORT_IP = WiFi.localIP().toString();
   Serial.println();
   Serial.println("THE WEBSERVER IS ON THIS IP:");
   Serial.println(WiFi.localIP());

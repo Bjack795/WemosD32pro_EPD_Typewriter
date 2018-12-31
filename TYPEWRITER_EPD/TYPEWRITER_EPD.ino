@@ -38,10 +38,10 @@ HardwareSerial Tastiera(1);
 #define YRES 128
 #define SPAZIATURA    1
 #define INTERLINEA    3
-#define MARGINE_DX    10*SPAZIATURA
-#define MARGINE_SX    10*SPAZIATURA
-#define MARGINE_UP    6*INTERLINEA
-#define MARGINE_DOWN  6*INTERLINEA
+#define MARGINE_DX_STD    10*SPAZIATURA
+#define MARGINE_SX_STD    10*SPAZIATURA
+#define MARGINE_UP_STD    6*INTERLINEA
+#define MARGINE_DOWN_STD  6*INTERLINEA
 
 GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display(GxEPD2_290(/*CS=5*/ SS, /*DC=*/ 12, /*RST=*/ 14, /*BUSY=*/ 15));
 
@@ -53,6 +53,10 @@ String PATHTEMP = "/Settings/temp.txt";
 String PATHCURSOR = "/Settings/cursor_file.txt";
 String PATHTESTI = "/Testi";
 String PATHSETTINGS = "/Settings";
+String CONNECTED_WIFI;
+String PASSPORT_IP;
+bool RESET_WIFI = false;
+bool OK_WIFI = false;
 
 /////////////////////////////////////////////////
 #define MAXLINES 200
@@ -62,10 +66,14 @@ int MIN_Y1 = 0;
 int INGOMBRO;
 int RES_LINES;
 int RES_WIDTH;
+int MARGINE_DX = MARGINE_DX_STD;
+int MARGINE_SX = MARGINE_SX_STD;
+int MARGINE_UP = MARGINE_UP_STD;
+int MARGINE_DOWN = MARGINE_DOWN_STD;
 int LUCE = 1;
 int YPAG = 0, XCUR = 0, YCUR = 0;
 /////////////////////////////////////////////////
-int LEVEL = 0;
+int LEVEL = -8;
 char MAIN_MENU [][XRES-4*SPAZIATURA] = {"Open","New"};
 char SAVE_MENU [][XRES-4*SPAZIATURA] = {"Save","Don't save"};
 int CHOSEN = 0;
@@ -120,6 +128,20 @@ void setup() {
 }
 
 void loop() {
+  if(LEVEL == -8)
+  {
+    disegnaWallpaper(screen1);
+    while(LEVEL == -8)
+    {
+    ANSWER = keyboard_loop();
+    if(ANSWER == "[Enter]")
+    {
+      LEVEL = 0;
+    }
+    Webserver_loop();
+    ledcWrite(1, (120+LUCE*120));
+    }
+  }
   Webserver_loop();
   ledcWrite(1, (120+LUCE*120));  
   if (LEVEL == 0) //In the main menu

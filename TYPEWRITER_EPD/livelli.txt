@@ -1,17 +1,8 @@
 level 0
 MAIN MENU
 
-	level 10
-	SETTINGS
-		level 11
-		MARGINS
-	
-		level 12
-		WIFI
-
-
-	level 100 
-	CHOOSE FILE (99-200)
+	level 99-200 
+	CHOOSE FILE 
 		
 		level 500
 		INSIDE TEXT
@@ -21,3 +12,13 @@ MAIN MENU
 
 		level 500
 		INSIDE TEXT
+
+	level 10
+	SETTINGS
+
+		level 11
+		MARGINS
+	
+		level 12
+		WIFI
+

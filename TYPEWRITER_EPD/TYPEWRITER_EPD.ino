@@ -74,7 +74,8 @@ int LUCE = 1;
 int YPAG = 0, XCUR = 0, YCUR = 0;
 /////////////////////////////////////////////////
 int LEVEL = -8;
-char MAIN_MENU [][XRES-4*SPAZIATURA] = {"Open","New"};
+char MAIN_MENU [][XRES-4*SPAZIATURA] = {"Open","New", "Settings"};
+char SETTINGS_MENU [][XRES-4*SPAZIATURA] = {"Margins","Wifi"};
 char SAVE_MENU [][XRES-4*SPAZIATURA] = {"Save","Don't save"};
 int CHOSEN = 0;
 int OPTION;
@@ -128,6 +129,7 @@ void setup() {
 }
 
 void loop() {
+  //***************************************************************** Level WALPAPER (-8)
   if(LEVEL == -8)
   {
     disegnaWallpaper(screen1);
@@ -144,6 +146,8 @@ void loop() {
   }
   Webserver_loop();
   ledcWrite(1, (120+LUCE*120));  
+  
+  //*************************************************************** Level MAIN MENU (0)
   if (LEVEL == 0) //In the main menu
   { OPTION = choose_page(ArrayCount(MAIN_MENU), MAIN_MENU); 
     if(CHOSEN == 1)
@@ -152,27 +156,30 @@ void loop() {
     {LEVEL = 100;} //choose the file
     else if(OPTION == 1)
     {LEVEL = 300;} //write the name of the new file
-
-    
+    else if(OPTION == 2)
+    {LEVEL = 10;} //settings
     }
-    }
+  }
 
-  
+  //**************************************************************** Level CHOICE OF THE FILE (100-199)
   else if (LEVEL > 99 and LEVEL <200) //choice of the file
   { if (CHOSEN == 1)
     {
       if((String)(MAIN_MENU[OPTION]) == "Open")
       { TITOLO = open_file("/Testi",&LENG,LISTA);
       }
-        IS_OLD = true; //I'm opening a new file
+        IS_OLD = true; //I'm opening an old file
      }
   }
+  
+  //**************************************************************** Level NEW FILE (300)
   else if (LEVEL == 300) //I have to create a new file
     {
       LENG_NEW = insert_name(entry_1); 
       IS_OLD = false;
     }
-  
+    
+ //***************************************************************** Level TEXT (500)
   else if (LEVEL == 500) //inside a text
   {  if(IS_OLD == true) //I'm opening an existent file
       {
@@ -204,6 +211,30 @@ void loop() {
     }    
       print_page(TEXT_NAME);  
   }
+  
+   //***************************************************************** Level SETTINGS (10)
+  else if (LEVEL == 10)
+  {
+    OPTION = choose_page(ArrayCount(SETTINGS_MENU), SETTINGS_MENU); 
+    if(CHOSEN == 1)
+    {
+    if(OPTION == 0)
+    {LEVEL = 11; Serial.println("MARGINI");} //margins
+    else if(OPTION == 1)
+    {LEVEL = 12;Serial.println("WIFI");} //wifi
+    }   
+  }
+  //***************************************************************** Level MARGINS (11)
+  else if (LEVEL == 11)
+  {
+    
+  }
+   //***************************************************************** Level WIFI (12)
+  else if (LEVEL == 12)
+  {
+    
+  }
+
 
   
 

@@ -5,7 +5,10 @@ void print_page(String pathtext)
   int posizione = YPAG*RES_WIDTH;
   int place;
   int mole;
+  int deltaTime;
+  int oldTime = millis();
   int formattazione = 1;
+  int cursor_trigger = 1;
   int riga_lung = 0;
   int tasto = 1;
   int saving = -1;
@@ -29,7 +32,7 @@ void print_page(String pathtext)
     }
     texto.seek(posizione); //mi posiziono all'inizio della pagina
     ASCII_file(PATHTEMP, "/Settings/ASCII.txt");
-    if (tasto == 1)
+    if (tasto == 1 && (deltaTime>800 || millis()-oldTime >800))
     {
       display.setTextColor(GxEPD_BLACK);
       display.setFullWindow();
@@ -43,7 +46,10 @@ void print_page(String pathtext)
           mole = charWidth(car);
           if(i == XCUR and j == YCUR)
           {
-            disegnaPicture(cursorImage,MARGINE_SX+riga_lung,MARGINE_UP+j*INGOMBRO+(j-1)*INTERLINEA-abs(MIN_Y1),1,abs(MIN_Y1));
+            if(cursor_trigger > 0)
+            {
+              disegnaPicture(cursorImage,MARGINE_SX+riga_lung,MARGINE_UP+j*INGOMBRO+(j-1)*INTERLINEA-abs(MIN_Y1),1,abs(MIN_Y1));
+            }
           }
           //ASCII 10 - line feed (una linea avanti) - il testo finisce con \r\n, salto l'"\r", poi scalo avanti ed esco dal ciclo
            if(car == '\n') 
@@ -110,6 +116,10 @@ void print_page(String pathtext)
     
     if (Tastiera.available() > 0) 
  {
+      deltaTime = millis()-oldTime;
+      oldTime = millis();
+      //Serial.print("Il tempo trascorso dall'ultimo tasto è: ");
+      //Serial.println(deltaTime);
       tasto = 1;
       ANSWER = keyboard_loop();
        if (ANSWER == "[Up]") //arrow up
@@ -229,6 +239,10 @@ void print_page(String pathtext)
       else if (ANSWER == "Control-F")
       { FLAG_ESC = 0;
         formattazione = -formattazione;
+      }
+      else if (ANSWER == "Control-C")
+      { FLAG_ESC = 0;
+        cursor_trigger = -cursor_trigger;
       }
         
        else if (ANSWER == "Backspace")

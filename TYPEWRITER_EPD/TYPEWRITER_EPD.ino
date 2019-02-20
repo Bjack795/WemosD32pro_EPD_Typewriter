@@ -1,6 +1,7 @@
 //TYPEWRITER.ino
 
 #include <SD.h>
+#include <EEPROM.h>
 #define ArrayCount(array) (sizeof array / sizeof array[0])
 //ArrayCount(myarray) --> rows
 //ArrayCount(myarray[0]) --> rows
@@ -43,7 +44,7 @@ HardwareSerial Tastiera(1);
 #define MARGINE_UP_STD    6*INTERLINEA
 #define MARGINE_DOWN_STD  6*INTERLINEA
 
-GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display(GxEPD2_290(/*CS=5*/ SS, /*DC=*/ 12, /*RST=*/ 14, /*BUSY=*/ 15));
+GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display(GxEPD2_290(/*CS=5*/ 5, /*DC=*/ 12, /*RST=*/ 14, /*BUSY=*/ 15));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 String ANSWER;
@@ -219,7 +220,7 @@ void loop() {
     if(CHOSEN == 1)
     {
     if(OPTION == 0)
-    {LEVEL = 11; Serial.println("MARGINI");} //margins
+    {LEVEL = 11;   paginaBianca();} //margins
     else if(OPTION == 1)
     {LEVEL = 12;Serial.println("WIFI");} //wifi
     }   
@@ -228,6 +229,7 @@ void loop() {
   else if (LEVEL == 11)
   {
     
+    marginFunction();
   }
    //***************************************************************** Level WIFI (12)
   else if (LEVEL == 12)

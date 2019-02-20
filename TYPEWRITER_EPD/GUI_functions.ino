@@ -409,7 +409,59 @@ int insert_name(char* entry) //make you insert the new file name
 
   
 }
+///////////////////////////////////////******************************************************************** Margini
 
+void marginFunction()
+{
+  char margini_stringhe [4][XRES-4*SPAZIATURA] = {"DX:   ","SX:   ", "UP:   ","DOWN: "};
+  int margini_valori [4] = {MARGINE_DX, MARGINE_SX, MARGINE_UP, MARGINE_DOWN};
+  int freccia = 0;
+  int tasto = 1;
+  CHOSEN = 0;
+
+  while (CHOSEN == 0)
+  {
+    Webserver_loop();
+    Serial.println("MARGINI");
+    if(tasto == 1)
+    {
+      display.setTextColor(GxEPD_BLACK);
+      display.setFullWindow();
+      display.fillScreen(GxEPD_WHITE);
+   for (int i = 0; i<4; i++)
+   {
+      display.setCursor(MARGINE_SX,i*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print(margini_stringhe[i]);
+      if (i == freccia) {display.print("<");} else {display.print(" ");} 
+      display.print(margini_valori[i]);
+      if (i == freccia) {display.print(">");}
+   }
+   
+      display.display(true);
+        tasto = 0;
+    }
+
+    if (Tastiera.available() > 0) 
+    {
+      tasto = 1;
+      ANSWER = keyboard_loop();
+        if (ANSWER == "[Up]") //arrow up
+        { FLAG_ESC = 0; if(freccia>0) {freccia--;}     }
+        else if (ANSWER == "[Down]") //arrow down
+        { FLAG_ESC = 0; if(freccia<3) {freccia++;}    }
+        else if (ANSWER == "[Left]") 
+        { FLAG_ESC = 0; 
+          if(margini_valori[freccia]>0){margini_valori[freccia]--;}
+          }
+        else if (ANSWER == "[Right]") 
+        { FLAG_ESC = 0; 
+          if(margini_valori[freccia]<YRES){margini_valori[freccia]++;}
+                }
+        else if (ANSWER == "[Esc]")
+        { FLAG_ESC = 1;}
+    }
+  }
+}
 
 
 

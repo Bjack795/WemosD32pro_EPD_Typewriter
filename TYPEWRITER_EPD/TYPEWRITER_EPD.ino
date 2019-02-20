@@ -6,7 +6,7 @@
 //ArrayCount(myarray) --> rows
 //ArrayCount(myarray[0]) --> rows
 /////////////////////////////////////////////////////////////////////////////////////////////
-  #include <WiFiManager.h>
+  #include <WiFiManager.h> 
 ////////////////////////////////////////////////////////////////////////
   #include <WiFi.h>              // Built-in
   #include <WebServer.h>
@@ -75,6 +75,7 @@ int LUCE = 1;
 int YPAG = 0, XCUR = 0, YCUR = 0;
 /////////////////////////////////////////////////
 int LEVEL = -8;
+int PREV_LEV = -8;
 char MAIN_MENU [][XRES-4*SPAZIATURA] = {"Open","New", "Settings"};
 char SETTINGS_MENU [][XRES-4*SPAZIATURA] = {"Margins","Wifi"};
 char SAVE_MENU [][XRES-4*SPAZIATURA] = {"Save","Don't save"};
@@ -97,6 +98,7 @@ char entry_1[XRES-4*SPAZIATURA];
 
 void setup() {
   Serial.begin(115200);
+  EEPROM.begin(32);
   Tastiera.begin(115200,SERIAL_8N1, PIN_RX, PIN_TX);
   display.init(115200);
   display.setRotation(1);
@@ -106,6 +108,10 @@ void setup() {
   INGOMBRO = MAX_HEIGHT+abs(MIN_Y1);
   RES_LINES = (YRES-MARGINE_UP+INTERLINEA)/(INGOMBRO+INTERLINEA)+1;
   RES_WIDTH = (XRES-MARGINE_SX+SPAZIATURA)/(MAX_WIDTH+SPAZIATURA);
+  EEPROM.get(0,MARGINE_DX);
+  EEPROM.get(4,MARGINE_SX);
+  EEPROM.get(8,MARGINE_UP);
+  EEPROM.get(16,MARGINE_DOWN);
   Serial.println(RES_WIDTH);
   delay(50);
   Webserver_setup();
@@ -133,6 +139,7 @@ void loop() {
   //***************************************************************** Level WALPAPER (-8)
   if(LEVEL == -8)
   {
+    PREV_LEV = -8; 
     disegnaWallpaper(screen1);
     while(LEVEL == -8)
     {
@@ -150,7 +157,8 @@ void loop() {
   
   //*************************************************************** Level MAIN MENU (0)
   if (LEVEL == 0) //In the main menu
-  { OPTION = choose_page(ArrayCount(MAIN_MENU), MAIN_MENU); 
+  { PREV_LEV = -8; 
+    OPTION = choose_page(ArrayCount(MAIN_MENU), MAIN_MENU); 
     if(CHOSEN == 1)
     {
     if(OPTION == 0)
@@ -164,7 +172,8 @@ void loop() {
 
   //**************************************************************** Level CHOICE OF THE FILE (100-199)
   else if (LEVEL > 99 and LEVEL <200) //choice of the file
-  { if (CHOSEN == 1)
+  { PREV_LEV = 0; 
+    if (CHOSEN == 1)
     {
       if((String)(MAIN_MENU[OPTION]) == "Open")
       { TITOLO = open_file("/Testi",&LENG,LISTA);
@@ -176,6 +185,7 @@ void loop() {
   //**************************************************************** Level NEW FILE (300)
   else if (LEVEL == 300) //I have to create a new file
     {
+      PREV_LEV = 0; 
       LENG_NEW = insert_name(entry_1); 
       IS_OLD = false;
     }
@@ -216,25 +226,26 @@ void loop() {
    //***************************************************************** Level SETTINGS (10)
   else if (LEVEL == 10)
   {
+    PREV_LEV = 0;
     OPTION = choose_page(ArrayCount(SETTINGS_MENU), SETTINGS_MENU); 
     if(CHOSEN == 1)
     {
     if(OPTION == 0)
-    {LEVEL = 11;   paginaBianca();} //margins
+    {PREV_LEV = LEVEL; LEVEL = 11;   paginaBianca();} //margins
     else if(OPTION == 1)
-    {LEVEL = 12;Serial.println("WIFI");} //wifi
+    {PREV_LEV = LEVEL; LEVEL = 12;Serial.println("WIFI");} //wifi
     }   
   }
   //***************************************************************** Level MARGINS (11)
   else if (LEVEL == 11)
   {
-    
+    PREV_LEV = 10;
     marginFunction();
   }
    //***************************************************************** Level WIFI (12)
   else if (LEVEL == 12)
   {
-    
+    PREV_LEV = 10;
   }
 
 

@@ -31,7 +31,7 @@ int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu
   display.display(true); 
   tasto = 0;
   }
-
+               
   if (Tastiera.available() > 0) {
       ANSWER = keyboard_loop();
       if (ANSWER == "[Enter]")
@@ -66,7 +66,7 @@ int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu
       }
   }
   else if(FLAG_ESC == 1)
-        {                }
+        { if(PREV_LEV>-1) {LEVEL = PREV_LEV; break;   }  }
   }
   Serial.print("scelta:");
   Serial.println(ypage+arrow);
@@ -413,7 +413,7 @@ int insert_name(char* entry) //make you insert the new file name
 
 void marginFunction()
 {
-  char margini_stringhe [4][XRES-4*SPAZIATURA] = {"DX:   ","SX:   ", "UP:   ","DOWN: "};
+  char margini_stringhe [][XRES-4*SPAZIATURA] = {"DX:   ","SX:   ", "UP:   ","DOWN: ", "DEFAULT"};
   int margini_valori [4] = {MARGINE_DX, MARGINE_SX, MARGINE_UP, MARGINE_DOWN};
   int freccia = 0;
   int tasto = 1;
@@ -436,9 +436,39 @@ void marginFunction()
       display.print(margini_valori[i]);
       if (i == freccia) {display.print(">");}
    }
+
+   display.setCursor(MARGINE_SX,5*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+   display.print(margini_stringhe[4]);
+   if (4 == freccia) {display.print("<-");} 
+   
+   
    
       display.display(true);
         tasto = 0;
+    }
+    if (Tastiera.available() == 0) 
+    {
+        if(FLAG_ESC == 1) //ho premuto ESC
+       {   
+        int saving = choose_page(2,SAVE_MENU); 
+        if (saving == 0)
+          {
+             
+            MARGINE_DX = margini_valori[0];
+            MARGINE_SX = margini_valori[1];
+            MARGINE_UP = margini_valori[2];
+            MARGINE_DOWN = margini_valori[3];
+            EEPROM.put(0,MARGINE_DX);
+            EEPROM.put(4,MARGINE_SX);
+            EEPROM.put(8,MARGINE_UP);
+            EEPROM.put(16,MARGINE_DOWN);
+            EEPROM.end();
+            
+          }
+        LEVEL = 10;
+          
+       
+       }
     }
 
     if (Tastiera.available() > 0) 
@@ -448,7 +478,7 @@ void marginFunction()
         if (ANSWER == "[Up]") //arrow up
         { FLAG_ESC = 0; if(freccia>0) {freccia--;}     }
         else if (ANSWER == "[Down]") //arrow down
-        { FLAG_ESC = 0; if(freccia<3) {freccia++;}    }
+        { FLAG_ESC = 0; if(freccia<4) {freccia++;}    }
         else if (ANSWER == "[Left]") 
         { FLAG_ESC = 0; 
           if(margini_valori[freccia]>0){margini_valori[freccia]--;}
@@ -457,9 +487,18 @@ void marginFunction()
         { FLAG_ESC = 0; 
           if(margini_valori[freccia]<YRES){margini_valori[freccia]++;}
                 }
+        else if (ANSWER == "[Enter]" && freccia == 4)
+        {
+          margini_valori[0] = MARGINE_DX_STD;
+          margini_valori[1] = MARGINE_SX_STD;
+          margini_valori[2] = MARGINE_UP_STD;
+          margini_valori[3]= MARGINE_DOWN_STD;
+        }
         else if (ANSWER == "[Esc]")
         { FLAG_ESC = 1;}
+
     }
+    
   }
 }
 

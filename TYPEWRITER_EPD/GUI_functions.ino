@@ -2,7 +2,7 @@
 
 int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu 
 {
-  paginaBianca();
+  //paginaBianca();
   int arrow = 0;
   int ypage = 0;
   int FLAG_ESC = 0;
@@ -58,6 +58,8 @@ int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu
       { FLAG_ESC = 0; }
       else if (ANSWER == "[Left]") 
       { FLAG_ESC = 0; }
+      else if (ANSWER == "Control-B") 
+      { FLAG_ESC = 0; paginaBianca(); tasto = 1;}
       
       else if (ANSWER == "[Esc]")
       {
@@ -77,7 +79,7 @@ int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu
 int open_file(String tpath,int* nem,char choices[][XRES-4*SPAZIATURA]) //choice of the file
 {
   getDirectory(tpath, nem, choices);
-  paginaBianca();
+  //paginaBianca();
   int num = *nem;
   int ypage = 0;
   int arrow = 0;
@@ -254,7 +256,7 @@ int insert_name(char* entry) //make you insert the new file name
   int riga_lung = 0;
   int magazzino [XRES-4*SPAZIATURA];
   int svuotabuffer = Tastiera.available();
-  paginaBianca();
+  //paginaBianca();
   for(int i = 0; i<XRES-MARGINE_DX;i++)
   {
     entry[i] = ' ';
@@ -501,6 +503,21 @@ void marginFunction()
     
   }
 }
+
+
+///////////////////////////////////////******************************************************************** WiFi
+void wifiFunction()
+
+{
+  
+
+
+  
+  
+}
+
+
+
 
 
 

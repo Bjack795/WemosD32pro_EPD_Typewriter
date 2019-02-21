@@ -17,7 +17,7 @@ void print_page(String pathtext)
   File texto = SD.open(PATHTEMP, FILE_READ);
   count_lines(texto); // LINEE e LINEE_LUNG
   char car;
-  paginaBianca();
+  //paginaBianca();
   while (true)
   {
     /*for(int i = 0; i<RES_LINES;i++)
@@ -32,7 +32,7 @@ void print_page(String pathtext)
     }
     texto.seek(posizione); //mi posiziono all'inizio della pagina
     ASCII_file(PATHTEMP, "/Settings/ASCII.txt");
-    if (tasto == 1 && (deltaTime>800 || millis()-oldTime >800))
+    if (tasto == 1 && (deltaTime>700 || millis()-oldTime >600))
     {
       display.setTextColor(GxEPD_BLACK);
       display.setFullWindow();
@@ -243,6 +243,10 @@ void print_page(String pathtext)
       else if (ANSWER == "Control-C")
       { FLAG_ESC = 0;
         cursor_trigger = -cursor_trigger;
+      }
+      else if (ANSWER == "Control-B")
+      { FLAG_ESC = 0;
+        paginaBianca();
       }
         
        else if (ANSWER == "Backspace")

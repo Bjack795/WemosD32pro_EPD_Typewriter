@@ -30,6 +30,7 @@ HardwareSerial Tastiera(1);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////SCREEN
 #define ENABLE_GxEPD2_GFX 0
 #define A_PIN 32
+#define RES_PIN 34
 #define PIN_RX 33
 #define PIN_TX 25
 #include <GxEPD2_BW.h>
@@ -58,7 +59,7 @@ String CONNECTED_WIFI;
 String PASSPORT_IP;
 bool RESET_WIFI = false;
 bool OK_WIFI = false;
-
+bool INSIDE = false;
 /////////////////////////////////////////////////
 #define MAXLINES 200
 int MAX_HEIGHT = 0;
@@ -81,6 +82,7 @@ char SETTINGS_MENU [][XRES-4*SPAZIATURA] = {"Margins","Wifi"};
 char SAVE_MENU [][XRES-4*SPAZIATURA] = {"Save","Don't save"};
 int CHOSEN = 0;
 int OPTION;
+
 //////////////
 char LISTA [50][XRES-4*SPAZIATURA];
 int LENG = 0;
@@ -97,6 +99,7 @@ char entry_1[XRES-4*SPAZIATURA];
 /////////////////////////////
 
 void setup() {
+  //digitalWrite(RES_PIN,HIGH);
   Serial.begin(115200);
   EEPROM.begin(32);
   Tastiera.begin(115200,SERIAL_8N1, PIN_RX, PIN_TX);
@@ -117,6 +120,7 @@ void setup() {
   Webserver_setup();
   ledcAttachPin(A_PIN, 1);
   ledcSetup(1, 12000, 8);
+  //pinMode(RES_PIN, OUTPUT);
   paginaBianca();
   if(!SD.exists(PATHSETTINGS))
   {
@@ -231,9 +235,9 @@ void loop() {
     if(CHOSEN == 1)
     {
     if(OPTION == 0)
-    {PREV_LEV = LEVEL; LEVEL = 11;   paginaBianca();} //margins
+    {PREV_LEV = LEVEL; LEVEL = 11;   } //margins
     else if(OPTION == 1)
-    {PREV_LEV = LEVEL; LEVEL = 12;Serial.println("WIFI");} //wifi
+    {PREV_LEV = LEVEL; LEVEL = 12; paginaBianca();} //wifi
     }   
   }
   //***************************************************************** Level MARGINS (11)
@@ -248,7 +252,7 @@ void loop() {
     PREV_LEV = 10;
   }
 
-
+  
   
 
 

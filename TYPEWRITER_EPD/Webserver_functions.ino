@@ -19,24 +19,22 @@
  IN NO EVENT SHALL THE AUTHOR OR COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  See more at http://www.dsbird.org.uk */
- WiFiManager wm;
-void Webserver_setup(){
-  Serial.begin(115200);
+ 
+void Webserver_setup(bool RESET_WIFI, int timeout)
+{
+  //Serial.begin(115200);
   if(RESET_WIFI == true)
   {
     wm.resetSettings();
-    
-    //wm.setAPStaticIPConfig()
   }
-  //wm.setConnectTimeout(30);
+  wm.setConfigPortalTimeout(timeout);
+  
   // IP for wifimanager:      192.168.4.1
-  //427 timeout
-  //569 cycle
-    if(!wm.autoConnect(INSIDE,"BjackWifi","password"))  // password protected ap
+    if(!wm.autoConnect("BjackWifi","password")) 
     {
-        Serial.println("failed to connect, we should reset as see if it connects");
+        Serial.println("Failed to connect");
         OK_WIFI = false;
-        //ESP.restart();
+        // ESP.restart();
     } 
     else {
         //if you get here you have connected to the WiFi   
@@ -72,8 +70,7 @@ void Webserver_setup(){
   #endif
   Serial.print(F("Initializing SD card...")); 
   if (!SD.begin(SD_CS_pin)) { // see if the card is present and can be initialised. Wemos SD-Card CS uses D8 
-    Serial.println(F("Card failed or not present, no SD Card data logging possible...Restarting"));
-    //ESP.restart();
+    Serial.println(F("Card failed or not present, no SD Card data logging possible..."));
     SD_present = false; 
   } 
   else
@@ -97,9 +94,14 @@ void Webserver_setup(){
   Serial.println("HTTP server started");
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+///////////////////////////////////////*********************************************************************
 void Webserver_loop(void){
-  wm.process();
+  
   server.handleClient(); // Listen for client connections
+  
 }
 
 // All supporting functions from here...

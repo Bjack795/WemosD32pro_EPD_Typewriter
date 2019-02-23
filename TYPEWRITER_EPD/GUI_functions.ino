@@ -28,7 +28,20 @@ int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu
   display.setTextColor(GxEPD_BLACK);
   display.setCursor(XRES-MARGINE_DX-textWidth("<-"), arrow*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
   display.println("<-");
-  display.display(true); 
+ 
+  if(LEVEL == 0)
+  {
+    display.setCursor(200, 5*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+    if (OK_WIFI == true)
+    {
+      display.println("ONLINE");
+    }
+    else
+    {
+      display.println("OFFLINE");
+    }
+  }
+   display.display(true); 
   tasto = 0;
   }
                
@@ -59,7 +72,10 @@ int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu
       else if (ANSWER == "[Left]") 
       { FLAG_ESC = 0; }
       else if (ANSWER == "Control-B") 
-      { FLAG_ESC = 0; paginaBianca(); tasto = 1;}
+      { FLAG_ESC = 0; paginaBianca(); tasto = 1;
+        INSIDE = true;
+        Webserver_setup(true,120);
+      }
       
       else if (ANSWER == "[Esc]")
       {

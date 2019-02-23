@@ -21,6 +21,7 @@ void Webserver_setup();
 void Webserver_loop();
 void copy_file(String pathold, String pathnew);
 void cursor_file(String pathsave);
+WiFiManager wm;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define PIN_RX 33
 #define PIN_TX 25
@@ -57,9 +58,9 @@ String PATHTESTI = "/Testi";
 String PATHSETTINGS = "/Settings";
 String CONNECTED_WIFI;
 String PASSPORT_IP;
-bool RESET_WIFI = false;
+//bool RESET_WIFI = false;
 bool OK_WIFI = false;
-bool INSIDE = false;
+bool INSIDE = false; //check if I can search for wifi
 /////////////////////////////////////////////////
 #define MAXLINES 200
 int MAX_HEIGHT = 0;
@@ -117,7 +118,7 @@ void setup() {
   EEPROM.get(16,MARGINE_DOWN);
   Serial.println(RES_WIDTH);
   delay(50);
-  Webserver_setup();
+  Webserver_setup(false,30);
   ledcAttachPin(A_PIN, 1);
   ledcSetup(1, 12000, 8);
   //pinMode(RES_PIN, OUTPUT);

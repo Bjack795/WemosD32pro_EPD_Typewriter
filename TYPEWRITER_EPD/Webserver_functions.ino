@@ -20,17 +20,19 @@
  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  See more at http://www.dsbird.org.uk */
  
-void Webserver_setup(bool RESET_WIFI, int timeout)
+void Webserver_connect(int timeout)
 {
-  //Serial.begin(115200);
-  if(RESET_WIFI == true)
-  {
-    wm.resetSettings();
-  }
+  wm.setEnableConfigPortal(false);
   wm.setConfigPortalTimeout(timeout);
+
+  if(OK_SERVER == true)
+  {
+    server.stop();
+    OK_SERVER = false;
+  }
   
   // IP for wifimanager:      192.168.4.1
-    if(!wm.autoConnect("BjackWifi","password")) 
+    if(!wm.autoConnect(SERVER_NAME)) 
     {
         Serial.println("Failed to connect");
         OK_WIFI = false;
@@ -48,38 +50,133 @@ void Webserver_setup(bool RESET_WIFI, int timeout)
         Serial.println(WiFi.subnetMask());
         Serial.print("SSID :");
         Serial.println(WiFi.SSID());
-  Serial.println("\nConnected to "+WiFi.SSID()+" Use IP address: "+WiFi.localIP().toString()); // Report which SSID and IP is in use
-  CONNECTED_WIFI = WiFi.SSID();
-  PASSPORT_IP = WiFi.localIP().toString();
-  Serial.println();
-  Serial.println("THE WEBSERVER IS ON THIS IP:");
-  Serial.println(WiFi.localIP());
-  Serial.println();
-  Serial.println();
+        Serial.println("\nConnected to "+WiFi.SSID()+" Use IP address: "+WiFi.localIP().toString()); // Report which SSID and IP is in use
+        CONNECTED_WIFI = WiFi.SSID();
+        PASSPORT_IP = WiFi.localIP().toString();
+        Serial.println();
+        Serial.println("THE WEBSERVER IS ON THIS IP:");
+        Serial.println(WiFi.localIP());
+        Serial.println();
+        Serial.println();
+
+        Serverfun();
   }
 
-  // The logical name http://fileserver.local will also access the device if you have 'Bonjour' running or your system supports multicast dns
+    //Serverfun();
+ 
+
+}
+////////////////////////***************************************************************************
+void Webserver_autoconnect(int timeout)
+{
+  wm.setEnableConfigPortal(true);
+  wm.setConfigPortalTimeout(timeout);
+
+  if(OK_SERVER == true)
+  {
+    server.stop();
+    OK_SERVER = false;
+  }
+  
+  // IP for wifimanager:      192.168.4.1
+    if(!wm.autoConnect(SERVER_NAME)) 
+    {
+        Serial.println("Failed to connect");
+        OK_WIFI = false;
+        // ESP.restart();
+    } 
+    else {
+        //if you get here you have connected to the WiFi   
+        OK_WIFI = true; 
+        Serial.println("connected...yeey :)");
+        Serial.print("LocalIP :");
+        Serial.println(WiFi.localIP());
+        Serial.print("Gateway :");
+        Serial.println(WiFi.gatewayIP());
+        Serial.print("Subnet :");
+        Serial.println(WiFi.subnetMask());
+        Serial.print("SSID :");
+        Serial.println(WiFi.SSID());
+        Serial.println("\nConnected to "+WiFi.SSID()+" Use IP address: "+WiFi.localIP().toString()); // Report which SSID and IP is in use
+        CONNECTED_WIFI = WiFi.SSID();
+        PASSPORT_IP = WiFi.localIP().toString();
+        Serial.println();
+        Serial.println("THE WEBSERVER IS ON THIS IP:");
+        Serial.println(WiFi.localIP());
+        Serial.println();
+        Serial.println();
+
+        Serverfun();
+  }
+
+    //Serverfun();
+ 
+
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+void Webserver_portal(int timeout)
+{
+  
+    display.setTextColor(GxEPD_BLACK);
+    display.setFullWindow();
+    display.fillScreen(GxEPD_WHITE);
+
+  // IP for wifimanager:      192.168.4.1
+    if(!wm.startConfigPortal(SERVER_NAME))  //WiFi.softAPIP()
+    {
+        Serial.println("Failed to connect");
+        OK_WIFI = false;
+
+      
+      display.setCursor(MARGINE_SX,0*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print("Failed to connect");
+        
+    } 
+    else 
+    {
+        //if you get here you have connected to the WiFi   
+      OK_WIFI = true; 
+      display.setCursor(MARGINE_SX,0*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print("Connected");
+      
+      Serial.println("connected...yeey :)");
+      Serial.print("LocalIP :");
+      Serial.println(WiFi.localIP());
+      Serial.print("Gateway :");
+      Serial.println(WiFi.gatewayIP());
+      Serial.print("Subnet :");
+      Serial.println(WiFi.subnetMask());
+      Serial.print("SSID :");
+      Serial.println(WiFi.SSID());
+      Serial.println("\nConnected to "+WiFi.SSID()+" Use IP address: "+WiFi.localIP().toString()); // Report which SSID and IP is in use
+      CONNECTED_WIFI = WiFi.SSID();
+      PASSPORT_IP = WiFi.localIP().toString();
+      Serial.println();
+      Serial.println("THE WEBSERVER IS ON THIS IP:");
+      Serial.println(WiFi.localIP());
+      Serial.println();
+      Serial.println();
+
+      Serverfun(); 
+  }
+  display.setCursor(MARGINE_SX,2*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+  display.print("Restarting...");
+  display.display(true);
+  delay(1000);
+  ESP.restart();
+
+
+}
+
+/////////////////////////////***********************************************************************************************************
+void Serverfun()
+{
+    // The logical name http://fileserver.local will also access the device if you have 'Bonjour' running or your system supports multicast dns
   if (!MDNS.begin(servername)) {          // Set your preferred server name, if you use "myserver" the address would be http://myserver.local/
     Serial.println(F("Error setting up MDNS responder!")); 
     ESP.restart(); 
   } 
-  #ifdef ESP32
-    // Note: SD_Card readers on the ESP32 will NOT work unless there is a pull-up on MISO, either do this or wire one on (1K to 4K7)
-    Serial.println(MISO);
-    pinMode(19,INPUT_PULLUP);
-  #endif
-  Serial.print(F("Initializing SD card...")); 
-  if (!SD.begin(SD_CS_pin)) { // see if the card is present and can be initialised. Wemos SD-Card CS uses D8 
-    Serial.println(F("Card failed or not present, no SD Card data logging possible..."));
-    SD_present = false; 
-  } 
-  else
-  {
-    Serial.println(F("Card initialised... file access enabled..."));
-    SD_present = true; 
-  }
-  // Note: Using the ESP32 and SD_Card readers requires a 1K to 4K7 pull-up to 3v3 on the MISO line, otherwise they do-not function.
-  //----------------------------------------------------------------------   
+  
   ///////////////////////////// Server Commands 
   server.on("/",         HomePage);
   server.on("/download", File_Download);
@@ -91,17 +188,26 @@ void Webserver_setup(bool RESET_WIFI, int timeout)
   
   ///////////////////////////// End of Request commands
   server.begin();
-  Serial.println("HTTP server started");
+  Serial.println("HTTP server started GINOPINO");
+  OK_SERVER = true;
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
 
 ///////////////////////////////////////*********************************************************************
-void Webserver_loop(void){
+void Webserver_loop(void)
+{
+  if (OK_SERVER == true)
+  {
+    server.handleClient(); // Listen for client connections
+  }
   
-  server.handleClient(); // Listen for client connections
   
+}
+
+//////////////////////////////////////////
+void Webserver_reset()
+{
+  //wm.resetSettings();
+  ESP.restart();
 }
 
 // All supporting functions from here...

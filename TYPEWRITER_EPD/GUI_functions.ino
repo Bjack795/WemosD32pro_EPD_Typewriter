@@ -72,10 +72,7 @@ int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu
       else if (ANSWER == "[Left]") 
       { FLAG_ESC = 0; }
       else if (ANSWER == "Control-B") 
-      { FLAG_ESC = 0; paginaBianca(); tasto = 1;
-        INSIDE = true;
-        Webserver_setup(true,120);
-      }
+      { FLAG_ESC = 0; paginaBianca(); tasto = 1;  }      
       
       else if (ANSWER == "[Esc]")
       {
@@ -440,7 +437,7 @@ void marginFunction()
   while (CHOSEN == 0)
   {
     Webserver_loop();
-    Serial.println("MARGINI");
+    //Serial.println("MARGINI");
     if(tasto == 1)
     {
       display.setTextColor(GxEPD_BLACK);
@@ -522,14 +519,169 @@ void marginFunction()
 
 
 ///////////////////////////////////////******************************************************************** WiFi
-void wifiFunction()
-
+void wifiInfoFunction()
 {
-  
+  int tasto = 1;
+  CHOSEN = 0;
+  Serial.println("WIFI");
+  while (CHOSEN == 0)
+  {
+    Webserver_loop();
+    if(tasto == 1)
+    {
+      display.setTextColor(GxEPD_BLACK);
+      display.setFullWindow();
+      display.fillScreen(GxEPD_WHITE);
+
+      display.setCursor(MARGINE_SX,0*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print("Status: ");
+      if (OK_WIFI == true)
+      {
+        display.print("ONLINE");
+      }
+      else
+      {
+        display.print("OFFLINE");
+      }
+
+      display.setCursor(MARGINE_SX,2*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print("WiFi: ");
+      if (OK_WIFI == true)
+      {
+        display.print(CONNECTED_WIFI);
+      }
+      display.setCursor(MARGINE_SX,4*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print("IP: ");
+      if (OK_WIFI == true)
+      {
+        display.print(PASSPORT_IP);
+      }
+      display.display(true);
+        tasto = 0;
+    }
+    if (Tastiera.available() == 0) 
+    {
+        if(FLAG_ESC == 1) //ho premuto ESC
+       {   
+          CHOSEN = 1;
+          LEVEL = PREV_LEV;
+       }
+    }
+
+    if (Tastiera.available() > 0) 
+    {
+      tasto = 1;
+      ANSWER = keyboard_loop();
+        if (ANSWER == "[Up]") //arrow up
+        { FLAG_ESC = 0;}
+        else if (ANSWER == "[Down]") //arrow down
+        { FLAG_ESC = 0; }
+        else if (ANSWER == "[Left]") 
+        { FLAG_ESC = 0; }
+        else if (ANSWER == "[Right]") 
+        { FLAG_ESC = 0; }
+        else if (ANSWER == "[Esc]")
+        { FLAG_ESC = 1;}
+    }
+    
+  }
+}
+
+///////////////////////////////////////******************************************************************** Portal
+void wifiPortalFunction()
+{
+  int inizio = 1;
+  int enter = 0;
+  CHOSEN = 0;
+  Serial.println("PORTAL");
+  while (CHOSEN == 0)
+  {
+    Webserver_loop();
+    if(inizio == 1)
+    {
+      display.setTextColor(GxEPD_BLACK);
+      display.setFullWindow();
+      display.fillScreen(GxEPD_WHITE);
+
+      display.setCursor(MARGINE_SX,0*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print("Press ENTER to start");
+      display.setCursor(MARGINE_SX,2*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print("Press ESC to exit");
+      
+      display.display(true);
+      inizio = 0;
+    }
+
+    if(enter == 1)
+    {
+      display.setTextColor(GxEPD_BLACK);
+      display.setFullWindow();
+      display.fillScreen(GxEPD_WHITE);
+      display.setCursor(MARGINE_SX,0*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print("Starting the portal...");
+      display.setCursor(MARGINE_SX,1*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print("Closing in: ");
+      display.print(TIMEOUT);
+      display.print(" seconds");
+      display.setCursor(MARGINE_SX,3*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print("Portal WiFi: ");
+      display.print(SERVER_NAME);
+      display.setCursor(MARGINE_SX,5*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print("Portal IP: ");
+      display.print(WiFi.softAPIP());
+      
+      display.display(true);
+      
+      Serial.println("PORTALE");
+      Serial.println(WiFi.softAPIP());
+      Serial.println();
+      Serial.println();
+      wm.setEnableConfigPortal(true); 
+      server.stop();
+      server.close();
+      OK_SERVER = false;
+      WiFi.disconnect();
+      wm.setConfigPortalTimeout(TIMEOUT);
+      Webserver_portal(TIMEOUT);
+      
+      
 
 
-  
-  
+    }
+
+
+    
+    if (Tastiera.available() == 0) 
+    {
+        if(FLAG_ESC == 1) //ho premuto ESC
+       {   
+          CHOSEN = 1;
+          LEVEL = PREV_LEV;
+       }
+    }
+
+    if (Tastiera.available() > 0) 
+    {
+      ANSWER = keyboard_loop();
+        if (ANSWER == "[Up]") //arrow up
+        { FLAG_ESC = 0;}
+        else if (ANSWER == "[Down]") //arrow down
+        { FLAG_ESC = 0; }
+        else if (ANSWER == "[Left]") 
+        { FLAG_ESC = 0; }
+        else if (ANSWER == "[Right]") 
+        { FLAG_ESC = 0; }
+        else if (ANSWER == "[Enter]")
+        {
+          FLAG_ESC = 0;
+          enter = 1;
+        }
+        
+        else if (ANSWER == "[Esc]")
+        { FLAG_ESC = 1;}
+    }
+    
+  }
 }
 
 

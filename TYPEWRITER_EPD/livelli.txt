@@ -21,4 +21,9 @@ MAIN MENU
 	
 		level 12
 		WIFI
+			
+			level 13
+			INFO
 
+			level 14
+			PORTAL

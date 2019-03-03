@@ -45,6 +45,7 @@ HardwareSerial Tastiera(1);
 #define MARGINE_SX_STD    10*SPAZIATURA
 #define MARGINE_UP_STD    6*INTERLINEA
 #define MARGINE_DOWN_STD  6*INTERLINEA
+#define TIMEOUT 100
 
 GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display(GxEPD2_290(/*CS=5*/ 5, /*DC=*/ 12, /*RST=*/ 14, /*BUSY=*/ 15));
 
@@ -58,8 +59,10 @@ String PATHTESTI = "/Testi";
 String PATHSETTINGS = "/Settings";
 String CONNECTED_WIFI;
 String PASSPORT_IP;
+const char SERVER_NAME[] = "BjackWiFi";
 //bool RESET_WIFI = false;
 bool OK_WIFI = false;
+bool OK_SERVER = false;
 bool INSIDE = false; //check if I can search for wifi
 /////////////////////////////////////////////////
 #define MAXLINES 200
@@ -73,14 +76,16 @@ int MARGINE_DX = MARGINE_DX_STD;
 int MARGINE_SX = MARGINE_SX_STD;
 int MARGINE_UP = MARGINE_UP_STD;
 int MARGINE_DOWN = MARGINE_DOWN_STD;
+int MARGINE_PROVA;
 int LUCE = 1;
 int YPAG = 0, XCUR = 0, YCUR = 0;
 /////////////////////////////////////////////////
 int LEVEL = -8;
 int PREV_LEV = -8;
-char MAIN_MENU [][XRES-4*SPAZIATURA] = {"Open","New", "Settings"};
+char MAIN_MENU [][XRES-4*SPAZIATURA] = {"Open","New", "Settings","Restart"};
 char SETTINGS_MENU [][XRES-4*SPAZIATURA] = {"Margins","Wifi"};
 char SAVE_MENU [][XRES-4*SPAZIATURA] = {"Save","Don't save"};
+char WIFI_MENU [][XRES-4*SPAZIATURA] = {"Info","Portal"};
 int CHOSEN = 0;
 int OPTION;
 
@@ -100,7 +105,6 @@ char entry_1[XRES-4*SPAZIATURA];
 /////////////////////////////
 
 void setup() {
-  //digitalWrite(RES_PIN,HIGH);
   Serial.begin(115200);
   EEPROM.begin(32);
   Tastiera.begin(115200,SERIAL_8N1, PIN_RX, PIN_TX);
@@ -112,13 +116,22 @@ void setup() {
   INGOMBRO = MAX_HEIGHT+abs(MIN_Y1);
   RES_LINES = (YRES-MARGINE_UP+INTERLINEA)/(INGOMBRO+INTERLINEA)+1;
   RES_WIDTH = (XRES-MARGINE_SX+SPAZIATURA)/(MAX_WIDTH+SPAZIATURA);
-  EEPROM.get(0,MARGINE_DX);
-  EEPROM.get(4,MARGINE_SX);
-  EEPROM.get(8,MARGINE_UP);
-  EEPROM.get(16,MARGINE_DOWN);
+  EEPROM.get(0,MARGINE_PROVA);
+  if(MARGINE_PROVA>4)
+  {
+    EEPROM.get(0,MARGINE_DX);
+    EEPROM.get(4,MARGINE_SX);
+    EEPROM.get(8,MARGINE_UP);
+    EEPROM.get(16,MARGINE_DOWN);
+  }
   Serial.println(RES_WIDTH);
   delay(50);
-  Webserver_setup(false,30);
+  initializeSD();
+  for (int i = 0; i<2; i++)
+  {
+    Webserver_autoconnect(2);
+    if(OK_WIFI == true) break;
+  }
   ledcAttachPin(A_PIN, 1);
   ledcSetup(1, 12000, 8);
   //pinMode(RES_PIN, OUTPUT);
@@ -172,6 +185,17 @@ void loop() {
     {LEVEL = 300;} //write the name of the new file
     else if(OPTION == 2)
     {LEVEL = 10;} //settings
+    else if(OPTION == 3)
+    {
+      display.setTextColor(GxEPD_BLACK);
+      display.setFullWindow();
+      display.fillScreen(GxEPD_WHITE);
+      display.setCursor(MARGINE_SX,0*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+      display.print("Restarting...");
+      display.display(true);
+      delay(1000);
+      ESP.restart();
+    } //restart
     }
   }
 
@@ -238,7 +262,7 @@ void loop() {
     if(OPTION == 0)
     {PREV_LEV = LEVEL; LEVEL = 11;   } //margins
     else if(OPTION == 1)
-    {PREV_LEV = LEVEL; LEVEL = 12; paginaBianca();} //wifi
+    {PREV_LEV = LEVEL; LEVEL = 12; } //wifi
     }   
   }
   //***************************************************************** Level MARGINS (11)
@@ -251,9 +275,27 @@ void loop() {
   else if (LEVEL == 12)
   {
     PREV_LEV = 10;
+    OPTION = choose_page(ArrayCount(WIFI_MENU), WIFI_MENU); 
+    if(CHOSEN == 1)
+    {
+    if(OPTION == 0)
+    {PREV_LEV = 12; LEVEL = 13;   } //margins
+    else if(OPTION == 1)
+    {PREV_LEV = 12; LEVEL = 14;   } //wifi
+    }   
   }
-
-  
+    //***************************************************************** Level INFO (13)
+  else if (LEVEL == 13)
+  {
+    wifiInfoFunction();
+    
+  }
+   //***************************************************************** Level PORTAL (14)
+  else if (LEVEL == 14)
+  {
+    wifiPortalFunction();
+    
+  }
   
 
 

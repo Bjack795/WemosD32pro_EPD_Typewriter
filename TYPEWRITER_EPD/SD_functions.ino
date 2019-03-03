@@ -4,6 +4,36 @@
 //file.position() POSITION OF THE CURSOR
 //file.peek() READ THE BYTE WITHOUT ADVANCING
 //file.size() READ THE SIZE OF THE FILE
+void initializeSD()
+{
+  #ifdef ESP32
+    // Note: SD_Card readers on the ESP32 will NOT work unless there is a pull-up on MISO, either do this or wire one on (1K to 4K7)
+    Serial.println(MISO);
+    pinMode(19,INPUT_PULLUP);
+  #endif
+  Serial.print(F("Initializing SD card...")); 
+  if (!SD.begin(SD_CS_pin)) { // see if the card is present and can be initialised. Wemos SD-Card CS uses D8 
+    Serial.println(F("Card failed or not present, no SD Card data logging possible..."));
+    SD_present = false; 
+    display.setTextColor(GxEPD_BLACK);
+    display.setFullWindow();
+    display.fillScreen(GxEPD_WHITE);
+    display.setCursor(MARGINE_SX,0*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+    display.print("SD Card not found");
+    display.setCursor(MARGINE_SX,2*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+    display.print("Restarting...");
+    display.display(true);
+    delay(1000);
+    ESP.restart();
+  } 
+  else
+  {
+    Serial.println(F("Card initialised... file access enabled..."));
+    SD_present = true; 
+  }
+  // Note: Using the ESP32 and SD_Card readers requires a 1K to 4K7 pull-up to 3v3 on the MISO line, otherwise they do-not function.
+  //----------------------------------------------------------------------   
+}
 
 ///////////////////////////////////////////////////PRINT DIRECTORY
 void printDirectory(File dir, int numTabs) {

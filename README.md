@@ -20,7 +20,8 @@ Arduino IDE must be used to upload all these files.
 
 **REMEMBER**
 
-Add the Wemos D32 pro from the Board Manager
+Add "esp32" in Board Manager of Arduino IDE or follow this https://github.com/espressif/arduino-esp32/blob/master/docs/arduino-ide/windows.md procedure to have the latest commits (this should fix some bugs).
+Then select Lolin D32 pro from the boards list.
 
 ### EPD library Rights
 

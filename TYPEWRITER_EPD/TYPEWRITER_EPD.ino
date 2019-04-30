@@ -47,7 +47,7 @@ HardwareSerial Tastiera(1);
 #define MARGINE_DOWN_STD  6*INTERLINEA
 #define TIMEOUT 100
 
-GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display(GxEPD2_290(/*CS=5*/ 5, /*DC=*/ 12, /*RST=*/ 14, /*BUSY=*/ 15));
+GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display(GxEPD2_290(/*CS=5*/ 5, /*DC=*/ 13, /*RST=*/ 14, /*BUSY=*/ 15));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 String ANSWER;

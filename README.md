@@ -11,7 +11,7 @@ This is a rudimental typewriter using Wemos D32 pro, a Waveshare ePaper 2.9" and
 - microSD
 
 The schematics of the connections are in the EPD_TYPEWRITER_Connections.pdf file
-![epd_connections](https://user-images.githubusercontent.com/42472256/50538298-8871a200-0b6d-11e9-8068-ccd3d9c65836.jpg)
+![epd_connections](https://user-images.githubusercontent.com/42472256/56958452-a0245b80-6b4a-11e9-8f99-2352ab41f729.png)
 
 ## Software
 All the libraries and files included in TYPEWRITER_EPD folder and downloaded from the library manager.

@@ -1,0 +1,2 @@
+incastri -> tolleranza 0.65
+usb -> tolleranza 0.65

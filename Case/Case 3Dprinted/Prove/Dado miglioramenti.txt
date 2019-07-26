@@ -1,0 +1,26 @@
+- diametro più grande (0.3 mm)
+- dado più grande (0.3 mm)
+- coordinate assolute in ripartenza
+;TYPE:CUSTOM
+;added code by post processing
+;script: PauseAtHeight.py
+;current layer: 26
+M83 				;estrusore relativo
+G1 F3000 E-25 			;ritrai 25 mm
+G1 F300 Z11.4			;sali in z
+G1 F9000 X190 Y190		;mettiti in x e y
+G1 F300 Z15			;sali ancora
+M104 S25			;standby temperature
+M0				;do the actual pause
+M109 S230			;resume temperature
+G1 F3000 E25			;estrai
+G1 F3000 E-25			;ritrai
+G1 F300 Z11.4			
+G1 F9000 X111.9 Y111.9
+G1 F3000 E25
+G1 F9000
+M82
+***********
+G28 X Y
+***********
+G92 E569.42979

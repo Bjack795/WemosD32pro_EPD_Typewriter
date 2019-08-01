@@ -14,7 +14,7 @@ This is a rudimental typewriter using Wemos D32 pro, a Waveshare ePaper 2.9" and
 - mechanical keyboard
 
 The schematics of the connections are in the EPD_TYPEWRITER_Connections.pdf file
-![EPAPER_TYPEWRITER_Connections](https://user-images.githubusercontent.com/42472256/62328574-ce039e00-b4b3-11e9-87e2-189eb45e78ea.png)
+![EPAPER_TYPEWRITER_Connections](https://user-images.githubusercontent.com/42472256/62328811-639f2d80-b4b4-11e9-9d57-5621f02243c2.png)
 
 ## Software
 All the libraries and files included in TYPEWRITER_EPD folder and downloaded from the library manager.

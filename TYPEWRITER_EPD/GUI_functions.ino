@@ -52,6 +52,7 @@ int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu
       ANSWER = keyboard_loop();
       if (ANSWER == "[Enter]")
       {
+        SAVE_TRIGGER = 0;
         CHOSEN = 1;
         break;
         
@@ -84,7 +85,7 @@ int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu
       }
   }
   else if(FLAG_ESC == 1)
-        { if(PREV_LEV>-1) {LEVEL = PREV_LEV; break;   }  }
+        {SAVE_TRIGGER = -1; if(PREV_LEV>-1) {LEVEL = PREV_LEV;  break;   }  }
   }
   Serial.print("scelta:");
   Serial.println(ypage+arrow);

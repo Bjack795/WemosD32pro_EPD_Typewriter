@@ -7,11 +7,12 @@ void print_page(String pathtext)
   int mole;
   int deltaTime;
   int oldTime = millis();
-  int formattazione = 1;
+  int formattazione = 0;
   int cursor_trigger = 1;
   int riga_lung = 0;
   int tasto = 1;
   int saving = -1;
+  SAVE_TRIGGER = -1;
   copy_file(pathtext,PATHTEMP);
   ASCII_file(PATHTEMP, "/Settings/ASCII.txt");
   File texto = SD.open(PATHTEMP, FILE_READ);
@@ -32,7 +33,7 @@ void print_page(String pathtext)
     }
     texto.seek(posizione); //mi posiziono all'inizio della pagina
     ASCII_file(PATHTEMP, "/Settings/ASCII.txt");
-    if (tasto == 1 && (deltaTime>700 || millis()-oldTime >600))
+    if (tasto == 1 && (deltaTime>700 || millis()-oldTime >500))
     {
       display.setTextColor(GxEPD_BLACK);
       display.setFullWindow();
@@ -92,7 +93,7 @@ void print_page(String pathtext)
        if(FLAG_ESC == 1) //ho premuto ESC
        {     texto.close();
              saving = choose_page(2,SAVE_MENU);
-             if(saving == 0)
+             if(saving == 0 && SAVE_TRIGGER != -1)
              {
               copy_file(PATHTEMP,pathtext);
               char pathtext_char[pathtext.length()];
@@ -106,6 +107,7 @@ void print_page(String pathtext)
               display.print("SAVED!");
               display.display(true);
               delay(1000);
+              SAVE_TRIGGER = -1;
              }
              CHOSEN = 1;
              LEVEL = LAST_LEVEL;
@@ -313,4 +315,3 @@ void print_page(String pathtext)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-

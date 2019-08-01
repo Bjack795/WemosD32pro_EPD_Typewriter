@@ -65,6 +65,7 @@ bool OK_WIFI = false;
 bool OK_SERVER = false;
 bool INSIDE = false; //check if I can search for wifi
 float voltage;
+int SAVE_TRIGGER = -1;
 /////////////////////////////////////////////////
 #define MAXLINES 200
 int MAX_HEIGHT = 0;

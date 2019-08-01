@@ -9,9 +9,12 @@ This is a rudimental typewriter using Wemos D32 pro, a Waveshare ePaper 2.9" and
 - Keyboard USB Host (http://www.hobbytronics.co.uk/usb-host-keyboard)
 - wires, headers and resistances
 - microSD
+- TP4056
+- AAA rechargeable batteries 
+- mechanical keyboard
 
 The schematics of the connections are in the EPD_TYPEWRITER_Connections.pdf file
-![epd_connections](https://user-images.githubusercontent.com/42472256/56958682-407a8000-6b4b-11e9-8102-c6051ff61ded.png)
+![EPAPER_TYPEWRITER_Connections](https://user-images.githubusercontent.com/42472256/62328574-ce039e00-b4b3-11e9-87e2-189eb45e78ea.png)
 
 ## Software
 All the libraries and files included in TYPEWRITER_EPD folder and downloaded from the library manager.
@@ -38,9 +41,8 @@ The functions are an implementation of this library https://github.com/tzapu/WiF
 ## Still a prototype
 This is the actual aspect of the project.
 
-![epd_typewriter_prototype](https://user-images.githubusercontent.com/42472256/50538304-a7703400-0b6d-11e9-8a45-0611bee080b8.jpg)
+![1](https://user-images.githubusercontent.com/42472256/62328355-39993b80-b4b3-11e9-98f6-0a0668b5841e.jpg)
+![2](https://user-images.githubusercontent.com/42472256/62328374-47e75780-b4b3-11e9-8be5-450779a3f3ca.jpg)
+![3](https://user-images.githubusercontent.com/42472256/62328389-503f9280-b4b3-11e9-84e6-70d9a5628e3f.jpg)
 
-The keyboard will be an assembled mechanical one and the case will be 3d Printed.
-To improve the project this could be an idea of the embedded keyboard, inventor 3d model of a custom GH60 keyboard:
 
-![gh60_render2](https://user-images.githubusercontent.com/42472256/48973720-c0edff80-f046-11e8-9203-d59c9dd1190e.png)

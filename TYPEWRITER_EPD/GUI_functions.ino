@@ -40,6 +40,9 @@ int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu
     {
       display.println("OFFLINE");
     }
+    display.setCursor(100, 5*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
+    voltaggio();
+    display.println(voltage);
   }
    display.display(true); 
   tasto = 0;
@@ -683,14 +686,3 @@ void wifiPortalFunction()
     
   }
 }
-
-
-
-
-
-
-
-
-
-
-

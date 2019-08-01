@@ -206,7 +206,7 @@ void Webserver_loop(void)
 //////////////////////////////////////////
 void Webserver_reset()
 {
-  //wm.resetSettings();
+  wm.resetSettings();
   ESP.restart();
 }
 
@@ -483,4 +483,3 @@ String file_size(int bytes){
   else                              fsize = String(bytes/1024.0/1024.0/1024.0,3)+" GB";
   return fsize;
 }
-

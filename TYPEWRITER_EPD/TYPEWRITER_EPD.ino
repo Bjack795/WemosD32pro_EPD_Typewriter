@@ -64,6 +64,7 @@ const char SERVER_NAME[] = "BjackWiFi";
 bool OK_WIFI = false;
 bool OK_SERVER = false;
 bool INSIDE = false; //check if I can search for wifi
+float voltage;
 /////////////////////////////////////////////////
 #define MAXLINES 200
 int MAX_HEIGHT = 0;
@@ -154,6 +155,7 @@ void setup() {
 }
 
 void loop() {
+
   //***************************************************************** Level WALPAPER (-8)
   if(LEVEL == -8)
   {
@@ -161,6 +163,7 @@ void loop() {
     disegnaWallpaper(screen1);
     while(LEVEL == -8)
     {
+     voltaggio();
     ANSWER = keyboard_loop();
     if(ANSWER == "[Enter]")
     {

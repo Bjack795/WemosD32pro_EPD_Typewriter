@@ -26,4 +26,9 @@ int sgn(double value)  //function giving the sign of a double
   return 1;
 }
 /////////////////////////////
-
+void voltaggio()
+{
+  voltage = (float)analogRead(34)/4096*5*4.1/3.9;
+  Serial.print(voltage,1);
+  Serial.println("v");
+}

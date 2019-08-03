@@ -12,6 +12,10 @@ void print_page(String pathtext)
   int riga_lung = 0;
   int tasto = 1;
   int saving = -1;
+  int contacar = 0;
+  int mediacar [50];
+  int mediacount = 0;
+  int carmedia = 200;
   SAVE_TRIGGER = -1;
   copy_file(pathtext,PATHTEMP);
   ASCII_file(PATHTEMP, "/Settings/ASCII.txt");
@@ -19,6 +23,10 @@ void print_page(String pathtext)
   count_lines(texto); // LINEE e LINEE_LUNG
   char car;
   //paginaBianca();
+  for (int i = 0;i<50;i++)
+  {
+    mediacar[i] = 0;
+  }
   while (true)
   {
     /*for(int i = 0; i<RES_LINES;i++)
@@ -33,8 +41,9 @@ void print_page(String pathtext)
     }
     texto.seek(posizione); //mi posiziono all'inizio della pagina
     ASCII_file(PATHTEMP, "/Settings/ASCII.txt");
-    if (tasto == 1 && (deltaTime>700 || millis()-oldTime >500))
+    if (tasto == 1 && (deltaTime>carmedia || millis()-oldTime >carmedia*0.8))
     {
+      contacar = posizione;
       display.setTextColor(GxEPD_BLACK);
       display.setFullWindow();
       display.fillScreen(GxEPD_WHITE);
@@ -71,7 +80,8 @@ void print_page(String pathtext)
             if((int)(car) == 32) {mole = 9*SPAZIATURA;}
             else if((int)(car) == 255 or (int)(car) == 0) {car = ' '; mole = -SPAZIATURA;}
             else if (CRYPTO == 1) {car = '*';}
-            display.print(car); 
+            display.print(car);
+            contacar++;
             riga_lung = riga_lung + mole + SPAZIATURA;                     
           }
           else // è '\r'
@@ -120,8 +130,42 @@ void print_page(String pathtext)
  {
       deltaTime = millis()-oldTime;
       oldTime = millis();
-      //Serial.print("Il tempo trascorso dall'ultimo tasto è: ");
-      //Serial.println(deltaTime);
+      Serial.print("Il tempo trascorso dall'ultimo tasto è: ");
+      Serial.println(deltaTime);
+
+    //if(deltaTime<5*carmedia && deltaTime> carmedia/3)
+ 
+      if(mediacount<49) 
+      {
+        
+             mediacar[mediacount] = deltaTime;
+             mediacount++;
+        
+       }
+      else
+      {
+        mediacount = 50;
+        for (int nummed = 0; nummed<49;nummed++)
+        {
+
+             mediacar[nummed] = mediacar[nummed+1];
+             
+          
+        }
+        mediacar[49] = deltaTime;
+      }
+      carmedia = 0;
+      for (int nummed = 0; nummed<mediacount;nummed++)
+      {
+
+             carmedia = carmedia + mediacar[nummed];
+      }
+      carmedia = carmedia/mediacount;
+
+//      Serial.print("il numero di caratteri è ");
+//      Serial.println(contacar+1);
+//      Serial.print("la media è ");
+//      Serial.println(carmedia);
       tasto = 1;
       ANSWER = keyboard_loop();
        if (ANSWER == "[Up]") //arrow up
@@ -249,8 +293,7 @@ void print_page(String pathtext)
       else if (ANSWER == "Control-B")
       { FLAG_ESC = 0;
         paginaBianca();
-      }
-        
+      }        
        else if (ANSWER == "Backspace")
       { //FLAG_ESC = 0;
        if(XCUR>0 or YCUR+YPAG>0)
@@ -281,7 +324,7 @@ void print_page(String pathtext)
       }  
         
       else if ((int)(ANSWER[0]) != 10)
-      {
+      {          
         FLAG_ESC = 0;
         count_lines(texto);
         texto.close();

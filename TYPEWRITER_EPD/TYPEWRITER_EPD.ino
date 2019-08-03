@@ -67,7 +67,7 @@ bool INSIDE = false; //check if I can search for wifi
 float voltage;
 int SAVE_TRIGGER = -1;
 /////////////////////////////////////////////////
-#define MAXLINES 200
+#define MAXLINES 1000
 int MAX_HEIGHT = 0;
 int MAX_WIDTH = 0;
 int MIN_Y1 = 0;
@@ -152,6 +152,7 @@ void setup() {
     TEMPFILE = SD.open(PATHCURSOR, FILE_WRITE);
     TEMPFILE.close();
   }
+ voltaggio();
  delay(50);
 }
 
@@ -164,7 +165,6 @@ void loop() {
     disegnaWallpaper(screen1);
     while(LEVEL == -8)
     {
-     voltaggio();
     ANSWER = keyboard_loop();
     if(ANSWER == "[Enter]")
     {

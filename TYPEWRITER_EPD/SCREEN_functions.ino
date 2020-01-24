@@ -15,6 +15,7 @@ void print_page(String pathtext)
   int contacar = 0;
   int mediacar [50];
   int mediacount = 0;
+  int char_non_stampati = 0;
   int carmedia = 200;
   SAVE_TRIGGER = -1;
   copy_file(pathtext,PATHTEMP);
@@ -41,8 +42,12 @@ void print_page(String pathtext)
     }
     texto.seek(posizione); //mi posiziono all'inizio della pagina
     ASCII_file(PATHTEMP, "/Settings/ASCII.txt");
-    if (tasto == 1 && (deltaTime>carmedia || millis()-oldTime >carmedia*0.8))
+    //if (tasto == 1 && (deltaTime>carmedia || millis()-oldTime >carmedia))
+    if (tasto == 1 && Tastiera.available() == 0)
     {
+      Serial.print("Il serial.available: ");
+      Serial.println(Tastiera.available());
+      char_non_stampati = 0;
       contacar = posizione;
       display.setTextColor(GxEPD_BLACK);
       display.setFullWindow();
@@ -95,6 +100,7 @@ void print_page(String pathtext)
     display.display(true);
     tasto = 0;
     }
+
     
   if(Tastiera.available() == 0)
     {
@@ -132,6 +138,10 @@ void print_page(String pathtext)
       oldTime = millis();
       Serial.print("Il tempo trascorso dall'ultimo tasto è: ");
       Serial.println(deltaTime);
+      if(deltaTime<400) {deltaTime = 400;}
+      char_non_stampati = char_non_stampati+1;
+      //Serial.print("i caratteri nel buffer sono : ");
+      //Serial.println(char_non_stampati);
 
     //if(deltaTime<5*carmedia && deltaTime> carmedia/3)
  
@@ -161,6 +171,8 @@ void print_page(String pathtext)
              carmedia = carmedia + mediacar[nummed];
       }
       carmedia = carmedia/mediacount;
+      Serial.print("la media è: ");
+      Serial.println(carmedia);
 
 //      Serial.print("il numero di caratteri è ");
 //      Serial.println(contacar+1);

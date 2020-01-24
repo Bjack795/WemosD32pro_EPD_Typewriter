@@ -42,7 +42,8 @@ int choose_page(int num, char choices[][XRES-4*SPAZIATURA]) //choice menu
     }
     display.setCursor(100, 5*(INGOMBRO+INTERLINEA)+ MARGINE_UP);
     voltaggio();
-    display.println(voltage);
+    display.print(voltage);
+    display.println('v');
   }
    display.display(true); 
   tasto = 0;

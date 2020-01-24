@@ -1,5 +1,4 @@
 //TYPEWRITER.ino
-
 #include <SD.h>
 #include <EEPROM.h>
 #define ArrayCount(array) (sizeof array / sizeof array[0])
@@ -67,7 +66,7 @@ bool INSIDE = false; //check if I can search for wifi
 float voltage;
 int SAVE_TRIGGER = -1;
 /////////////////////////////////////////////////
-#define MAXLINES 1000
+#define MAXLINES 10000
 int MAX_HEIGHT = 0;
 int MAX_WIDTH = 0;
 int MIN_Y1 = 0;
@@ -109,6 +108,10 @@ char entry_1[XRES-4*SPAZIATURA];
 void setup() {
   Serial.begin(115200);
   EEPROM.begin(32);
+  pinMode(35,INPUT);
+//  esp_sleep_enable_ext0_wakeup(GPIO_NUM_36, 0);
+//  print_wakeup_reason();
+  btStop();
   Tastiera.begin(115200,SERIAL_8N1, PIN_RX, PIN_TX);
   display.init(115200);
   display.setRotation(1);
@@ -118,6 +121,7 @@ void setup() {
   INGOMBRO = MAX_HEIGHT+abs(MIN_Y1);
   RES_LINES = (YRES-MARGINE_UP+INTERLINEA)/(INGOMBRO+INTERLINEA)+1;
   RES_WIDTH = (XRES-MARGINE_SX+SPAZIATURA)/(MAX_WIDTH+SPAZIATURA);
+  //attachInterrupt(digitalPinToInterrupt(36),sleepFunction, RISING);
   EEPROM.get(0,MARGINE_PROVA);
   if(MARGINE_PROVA>4)
   {
